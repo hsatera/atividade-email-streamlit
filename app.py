@@ -13,7 +13,6 @@ gabarito_data = {
 # Criar DataFrame com o gabarito
 df = pd.DataFrame(list(gabarito_data.items()), columns=['QUESTAO', 'GABARITO'])
 df.set_index('QUESTAO', inplace=True)
-df.to_csv('gabarito.csv') # Salva o gabarito em um arquivo CSV
 
 # Dicionário de domínios e questões
 dominio_data = {
@@ -87,6 +86,11 @@ if submitted:
         acertos_dominio = {dominio: 0 for dominio in dominio_data}
         total_por_dominio = {dominio: 0 for dominio in dominio_data}
 
+        for questao, resposta_usuario_atual in respostas_usuario.items():
+            gabarito_correto = df.loc[questao, 'GABARITO']
+            if resposta_usuario_atual == gabarito_correto:
+                acertos_total += 1
+
         for dominio, dificuldades in dominio_data.items():
             for dificuldade, questoes in dificuldades.items():
                 total_por_dominio[dominio] += len(questoes)
@@ -94,7 +98,6 @@ if submitted:
                     resposta = respostas_usuario.get(q, '')
                     if resposta == df.loc[q, 'GABARITO']:
                         acertos_dominio[dominio] += 1
-                        acertos_total += 1
 
         # Calcular porcentagem de acertos por domínio
         porcentagem_acertos_dominio = {}
