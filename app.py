@@ -20,8 +20,7 @@ dominio_data = {
         "Fácil": [1, 2, 15, 18, 23],
         "Intermediária": [16]
     },
-    "Abordagem Familiar e Comunitária": {
-        "Fácil": [32, 38],
+    "Abordagem Familiar": {
         "Intermediária": [3]
     },
     "Vigilância em Saúde": {
@@ -47,11 +46,17 @@ dominio_data = {
         "Fácil": [14, 23, 24, 25, 31, 40]
     },
     "Saúde Coletiva": {
-        "Fácil": [17, 18, 19, 21, 28, 31, 33, 36, 38],
+        "Fácil": [17, 18, 19, 21, 28, 31, 38],
         "Intermediária": [20]
     },
     "Trabalho em Equipe Multidisciplinar": {
         "Fácil": [28, 31, 38]
+    },
+    "Abordagem Comunitária": {
+        "Fácil": [32, 38]
+    },
+    "Avaliação da Qualidade e Auditoria": {
+        "Fácil": [33, 36]
     }
 }
 
@@ -79,6 +84,7 @@ if submitted:
     else:
         acertos_total = 0
         acertos_dominio = {dominio: 0 for dominio in dominio_data}
+        erros_dominio = {dominio: 0 for dominio in dominio_data} # Adicionado contador de erros
         total_por_dominio = {dominio: 0 for dominio in dominio_data}
 
         for questao, resposta_usuario_atual in respostas_usuario.items():
@@ -93,12 +99,8 @@ if submitted:
                     resposta = respostas_usuario.get(q, '')
                     if resposta == df.loc[q, 'GABARITO']:
                         acertos_dominio[dominio] += 1
-
-        # Calcular porcentagem de acertos por domínio
-        porcentagem_acertos_dominio = {}
-        for dominio, acertos in acertos_dominio.items():
-            total = total_por_dominio[dominio]
-            porcentagem_acertos_dominio[dominio] = (acertos / total * 100) if total > 0 else 0
+                    else:
+                        erros_dominio[dominio] += 1 # Incrementa o contador de erros para o domínio
 
         # Gabarito com feedback
         st.subheader('🔑 Gabarito da Prova')
@@ -124,20 +126,47 @@ if submitted:
         with col_perc_total:
             st.metric("Percentual Total de Acertos", f"{(acertos_total / 40 * 100):.1f}%")
 
-        # Gráfico desempenho por domínio
+        ---
+        # Gráfico de Desempenho por Domínio (Acertos e Erros)
         st.subheader('📈 Desempenho por Domínio')
-        fig, ax = plt.subplots(figsize=(10, 8))
-        dominios = [d.split(',')[0][:20] + '...' if len(d) > 20 else d for d in dominio_data.keys()]
-        porcentagens = list(porcentagem_acertos_dominio.values())
+        
+        # Pega os nomes completos dos domínios
+        dominios_nomes = list(dominio_data.keys()) 
+        # Inverte a ordem para que o primeiro domínio apareça no topo do gráfico
+        dominios_nomes.reverse() 
+        
+        # Pega os valores de acertos e erros na ordem invertida dos domínios
+        acertos = [acertos_dominio[d] for d in dominios_nomes]
+        erros = [erros_dominio[d] for d in dominios_nomes]
 
-        bars = ax.barh(dominios, porcentagens, color='#27ae60')
-        ax.set_xlabel('Percentual de Acertos (%)')
-        ax.set_xlim(0, 100)
-        ax.invert_yaxis()
+        # Ajusta o tamanho da figura dinamicamente para acomodar nomes longos
+        # e o número de domínios. Um fator de 0.65 tende a funcionar bem.
+        fig, ax = plt.subplots(figsize=(12, len(dominios_nomes) * 0.65)) 
 
-        for bar, perc in zip(bars, porcentagens):
-            width = bar.get_width()
-            ax.text(width + 1, bar.get_y() + bar.get_height() / 2, f'{perc:.1f}%', ha='left', va='center')
+        # Plota as barras de acertos (verde)
+        bars_acertos = ax.barh(dominios_nomes, acertos, color='#27ae60', label='Acertos') # Verde
+        
+        # Plota as barras de erros (vermelho), empilhadas sobre as de acertos
+        bars_erros = ax.barh(dominios_nomes, erros, left=acertos, color='#e74c3c', label='Erros') # Vermelho
 
-        plt.tight_layout()
-        st.pyplot(fig)
+        ax.set_xlabel('Número de Questões')
+        ax.set_title('Acertos e Erros por Domínio')
+        ax.legend(loc='lower right') # Adiciona a legenda em uma posição que não atrapalhe os nomes
+
+        # Adiciona os rótulos de valores dentro das barras
+        for i, (a, e) in enumerate(zip(acertos, erros)):
+            # Rótulo para acertos
+            if a > 0: # Mostra o rótulo apenas se houver acertos
+                ax.text(a / 2, i, str(a), ha='center', va='center', color='white', fontweight='bold', fontsize=9)
+            
+            # Rótulo para erros
+            if e > 0: # Mostra o rótulo apenas se houver erros
+                ax.text(a + e / 2, i, str(e), ha='center', va='center', color='white', fontweight='bold', fontsize=9)
+            
+            # Opcional: Rótulo do total de questões por domínio (pode poluir)
+            # total_questoes_dominio = a + e
+            # ax.text(total_questoes_dominio + 0.5, i, f'({total_questoes_dominio})', ha='left', va='center', color='black', fontsize=8)
+
+
+        plt.tight_layout() # Ajusta o layout para evitar sobreposições
+        st.pyplot(fig) # Exibe o gráfico no Streamlit
