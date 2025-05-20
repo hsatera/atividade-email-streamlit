@@ -21,7 +21,7 @@ dominio_data = {
         "Intermediária": [16]
     },
     "Abordagem Familiar e Comunitária": {
-        "Fácil": [32, 38]
+        "Fácil": [32, 38],
         "Intermediária": [3]
     },
     "Vigilância em Saúde": {
