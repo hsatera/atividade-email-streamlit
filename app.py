@@ -20,8 +20,8 @@ dominio_data = {
         "Fácil": [1, 2, 15, 18, 23],
         "Intermediária": [16]
     },
-    "Abordagem Familiar": {
-        "Intermediária": [3]
+    "Abordagem Familiar e Comunitária": {
+        "Intermediária": [3, 32, 38]
     },
     "Vigilância em Saúde": {
         "Fácil": [4, 21],
@@ -43,20 +43,11 @@ dominio_data = {
         "Intermediária": [16]
     },
     "Princípios da APS": {
-        "Fácil": [14, 23, 24, 25, 31, 40]
+        "Fácil": [14, 23, 24, 25, 28, 31, 38, 40]
     },
     "Saúde Coletiva": {
-        "Fácil": [17, 18, 19, 21, 28, 31, 38],
+        "Fácil": [17, 18, 19, 21, 28, 31, 33, 36, 38],
         "Intermediária": [20]
-    },
-    "Trabalho em Equipe Multidisciplinar": {
-        "Fácil": [28, 31, 38]
-    },
-    "Abordagem Comunitária": {
-        "Fácil": [32, 38]
-    },
-    "Avaliação da Qualidade e Auditoria": {
-        "Fácil": [33, 36]
     }
 }
 
