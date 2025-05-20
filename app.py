@@ -52,7 +52,7 @@ dominio_data = {
 }
 
 # Configurar página
-st.title('📝 Correção Avaliação PMMC I 2025')
+st.title('📝 Avaliação PMMC I 2025')
 st.subheader('Marque suas respostas:')
 
 with st.form(key='user_answers'):
