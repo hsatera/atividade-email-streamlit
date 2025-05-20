@@ -126,7 +126,9 @@ if submitted:
         with col_perc_total:
             st.metric("Percentual Total de Acertos", f"{(acertos_total / 40 * 100):.1f}%")
 
-        ---
+        # Se você quiser uma linha divisória aqui, use:
+        st.markdown("---") 
+
         # Gráfico de Desempenho por Domínio (Acertos e Erros)
         st.subheader('📈 Desempenho por Domínio')
         
