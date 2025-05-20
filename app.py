@@ -6,151 +6,48 @@ import matplotlib.pyplot as plt
 df = pd.read_csv('dicionario.csv')
 dominio_data = {
     "Pesquisa Médica, Gestão em Saúde, Comunicação e Docência": {
-        "Fácil": [
-            1,
-            2,
-            15,
-            18,
-            23
-        ],
-        "Intermediária": [
-            16
-        ]
+        "Fácil": [1, 2, 15, 18, 23],
+        "Intermediária": [16]
     },
     "Abordagem Familiar": {
-        "Intermediária": [
-            3
-        ]
+        "Intermediária": [3]
     },
     "Vigilância em Saúde": {
-        "Fácil": [
-            4,
-            21
-        ],
-        "Intermediária": [
-            5,
-            20
-        ]
+        "Fácil": [4, 21],
+        "Intermediária": [5, 20]
     },
     "Abordagem Individual": {
-        "Fácil": [
-            6,
-            7,
-            8,
-            9,
-            19,
-            21,
-            22,
-            23,
-            24,
-            26,
-            27,
-            28,
-            29,
-            30,
-            34,
-            37,
-            39
-        ],
-        "Intermediária": [
-            10,
-            16
-        ]
+        "Fácil": [6, 7, 8, 9, 19, 21, 22, 23, 24, 26, 27, 28, 29, 30, 34, 37, 39],
+        "Intermediária": [10, 16]
     },
     "Atenção à Saúde": {
-        "Fácil": [
-            6,
-            7,
-            8,
-            9,
-            13,
-            15,
-            18,
-            19,
-            26,
-            27,
-            28,
-            29,
-            30,
-            35,
-            37,
-            39
-        ],
-        "Intermediária": [
-            16,
-            20
-        ]
+        "Fácil": [6, 7, 8, 9, 13, 15, 18, 19, 26, 27, 28, 29, 30, 35, 37, 39],
+        "Intermediária": [16, 20]
     },
     "Gestão e Organização do Processo de Trabalho": {
-        "Fácil": [
-            6,
-            7,
-            14,
-            23,
-            28,
-            31,
-            36
-        ]
+        "Fácil": [6, 7, 14, 23, 28, 31, 36]
     },
     "Raciocínio Clínico": {
-        "Fácil": [
-            11,
-            12,
-            15,
-            23,
-            24,
-            29,
-            35,
-            39
-        ],
-        "Intermediária": [
-            16
-        ]
+        "Fácil": [11, 12, 15, 23, 24, 29, 35, 39],
+        "Intermediária": [16]
     },
     "Princípios da APS": {
-        "Fácil": [
-            14,
-            23,
-            24,
-            25,
-            31,
-            40
-        ]
+        "Fácil": [14, 23, 24, 25, 31, 40]
     },
     "Saúde Coletiva": {
-        "Fácil": [
-            17,
-            18,
-            19,
-            21,
-            28,
-            31,
-            38
-        ],
-        "Intermediária": [
-            20
-        ]
+        "Fácil": [17, 18, 19, 21, 28, 31, 38],
+        "Intermediária": [20]
     },
     "Trabalho em Equipe Multidisciplinar": {
-        "Fácil": [
-            28,
-            31,
-            38
-        ]
+        "Fácil": [28, 31, 38]
     },
     "Abordagem Comunitária": {
-        "Fácil": [
-            32,
-            38
-        ]
+        "Fácil": [32, 38]
     },
     "Avaliação da Qualidade e Auditoria": {
-        "Fácil": [
-            33,
-            36
-        ]
+        "Fácil": [33, 36]
     }
-} # A chave extra foi removida desta linha
+}
 
 # Configurar página
 st.title('📝 Correção Avaliação PMMC I 2025')
@@ -163,7 +60,7 @@ with st.form(key='user_answers'):
         with cols[i % 4]:
             respostas_usuario[i+1] = st.selectbox(
                 f'Questão {i+1}',
-                ['A', 'B', 'C', 'D'],
+                ['', 'A', 'B', 'C', 'D'],  # opção vazia para começar
                 key=f'q{i+1}'
             )
     submitted = st.form_submit_button('Submeter Respostas')
@@ -177,7 +74,8 @@ if submitted:
         for dificuldade, questoes in dificuldades.items():
             total_por_dominio[dominio] += len(questoes)
             for q in questoes:
-                if respostas_usuario[q] == df.at[q-1, 'GABARITO']:
+                resposta = respostas_usuario.get(q, '')
+                if resposta != '' and resposta == df.at[q-1, 'GABARITO']:
                     acertos_dominio[dominio] += 1
                     acertos_total += 1
 
@@ -197,6 +95,8 @@ if submitted:
         texto = f'**{questao}:** '
         if resposta_user == gabarito_correto:
             texto += f'<span style="background-color:#90EE90">{gabarito_correto}</span>'
+        elif resposta_user == '':
+            texto += f'<span style="color:orange;">Não respondida</span> <span style="color:green;">{gabarito_correto}</span>'
         else:
             texto += f'<span style="text-decoration: line-through; color:red;">{resposta_user}</span> <span style="color:green;">{gabarito_correto}</span>'
 
