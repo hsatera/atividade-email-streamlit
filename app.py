@@ -2,8 +2,20 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Carregar dados
-df = pd.read_csv('dicionario.csv')
+# Dados do gabarito
+gabarito_data = {
+    1: 'B', 2: 'C', 3: 'D', 4: 'C', 5: 'B', 6: 'D', 7: 'B', 8: 'D', 9: 'B', 10: 'C',
+    11: 'A', 12: 'D', 13: 'C', 14: 'A', 15: 'A', 16: 'C', 17: 'A', 18: 'A', 19: 'C', 20: 'C',
+    21: 'A', 22: 'B', 23: 'A', 24: 'C', 25: 'D', 26: 'C', 27: 'C', 28: 'B', 29: 'C', 30: 'D',
+    31: 'C', 32: 'C', 33: 'A', 34: 'C', 35: 'D', 36: 'A', 37: 'B', 38: 'B', 39: 'C', 40: 'C'
+}
+
+# Criar DataFrame com o gabarito
+df = pd.DataFrame(list(gabarito_data.items()), columns=['QUESTAO', 'GABARITO'])
+df.set_index('QUESTAO', inplace=True)
+df.to_csv('gabarito.csv') # Salva o gabarito em um arquivo CSV
+
+# Dicionário de domínios e questões
 dominio_data = {
     "Pesquisa Médica, Gestão em Saúde, Comunicação e Docência": {
         "Fácil": [1, 2, 15, 18, 23],
@@ -80,7 +92,7 @@ if submitted:
                 total_por_dominio[dominio] += len(questoes)
                 for q in questoes:
                     resposta = respostas_usuario.get(q, '')
-                    if resposta == df.at[q-1, 'GABARITO']:
+                    if resposta == df.loc[q, 'GABARITO']:
                         acertos_dominio[dominio] += 1
                         acertos_total += 1
 
@@ -96,7 +108,7 @@ if submitted:
         for i in range(40):
             questao = i + 1
             resposta_user = respostas_usuario.get(questao, '')
-            gabarito_correto = df.at[i, 'GABARITO']
+            gabarito_correto = df.loc[questao, 'GABARITO']
             texto = f'**{questao}:** '
             if resposta_user == gabarito_correto:
                 texto += f'<span style="background-color:#90EE90">{gabarito_correto}</span>'
